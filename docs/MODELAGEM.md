@@ -1,15 +1,9 @@
 # ApoiaPet — Modelagem de dados (Firebase)
 
-> *Encontre pontos. Compartilhe cuidado.*
-
-O ApoiaPet usa dois serviços do Firebase, ambos no plano gratuito (Spark):
-
 | Serviço | Para quê |
 |---|---|
 | **Authentication** | Login com Google e sessão do usuário (RF01–RF04) |
 | **Cloud Firestore** | Dados dos usuários, dos pontos de apoio e das fotos (base64) |
-
-![DER](DER.png)
 
 ## Coleção `usuarios` (ID do documento = UID do Firebase Auth)
 | Campo | Tipo | Obrig. | Observação |
@@ -53,7 +47,7 @@ Não há Storage. A foto fica no campo `fotoBase64` do próprio ponto, reduzida 
 | RN08 dados persistem | — | gravação no Firestore |
 | RN09 GPS opcional | seleção manual no mapa | — |
 
-As regras completas estão em `firebase/firestore.rules`. Elas também bloqueiam edição e exclusão de pontos (versão inicial, seção 10.2).
+As regras completas estão em `firebase/firestore.rules`. Elas também bloqueiam edição e exclusão de pontos.
 
 ## Sequência de gravação de um ponto
 1. Valida o formulário.
