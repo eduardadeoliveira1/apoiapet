@@ -1,0 +1,82 @@
+rules_version = '2';
+
+// ApoiaPet — regras do Cloud Firestore
+// Cole em: Console do Firebase > Firestore Database > Regras > Publicar
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function logado() {
+      return request.auth != null;
+    }
+
+    // ---------- usuarios/{uid} ----------
+    // Cada pessoa só enxerga e grava o próprio documento.
+    match /usuarios/{uid} {
+      allow read: if logado() && request.auth.uid == uid;
+
+      allow create: if logado() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['nome', 'email', 'dataCadastro', 'ultimoAcesso'])
+        && request.resource.data.nome is string
+        && request.resource.data.email is string
+        && request.resource.data.dataCadastro == request.time;
+
+      allow update: if logado() && request.auth.uid == uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ultimoAcesso']);
+
+      allow delete: if false;
+    }
+
+    // ---------- pontos_apoio/{id} ----------
+    match /pontos_apoio/{id} {
+
+      // Leitura: usuário logado vê pontos ativos e os próprios pontos.
+      allow read: if logado()
+        && (resource.data.pontoAtivo == true || resource.data.usuarioId == request.auth.uid);
+
+      // Criação: somente autenticado, com dados válidos (RN01–RN05).
+      allow create: if logado() && pontoValido(request.resource.data);
+
+      // Versão inicial: sem edição nem exclusão (seção 10.2).
+      allow update, delete: if false;
+    }
+
+    function pontoValido(d) {
+      return d.keys().hasOnly([
+          'usuarioId', 'cadastradoPor', 'latitude', 'longitude', 'endereco',
+          'referencia', 'descricao', 'possuiAgua', 'possuiComida', 'possuiAbrigo',
+          'atendeCaes', 'atendeGatos', 'pontoAtivo', 'fotoBase64', 'dataCadastro'])
+        && d.keys().hasAll([
+          'usuarioId', 'latitude', 'longitude', 'endereco', 'referencia',
+          'descricao', 'possuiAgua', 'possuiComida', 'possuiAbrigo',
+          'atendeCaes', 'atendeGatos', 'pontoAtivo', 'fotoBase64', 'dataCadastro'])
+
+        // dono é quem está logado
+        && d.usuarioId == request.auth.uid
+
+        // RN02: localização válida
+        && d.latitude is number && d.latitude >= -90 && d.latitude <= 90
+        && d.longitude is number && d.longitude >= -180 && d.longitude <= 180
+
+        // textos obrigatórios
+        && d.endereco is string && d.endereco.size() > 0 && d.endereco.size() <= 255
+        && d.referencia is string && d.referencia.size() > 0 && d.referencia.size() <= 255
+        && d.descricao is string && d.descricao.size() > 0 && d.descricao.size() <= 500
+
+        // recursos e animais
+        && d.possuiAgua is bool && d.possuiComida is bool && d.possuiAbrigo is bool
+        && d.atendeCaes is bool && d.atendeGatos is bool && d.pontoAtivo is bool
+        && (d.possuiAgua || d.possuiComida || d.possuiAbrigo)                 // RN03
+        && (!d.possuiComida || d.atendeCaes || d.atendeGatos)                 // RN04
+        && (d.possuiComida || (!d.atendeCaes && !d.atendeGatos))              // RN05
+
+        // RN06: foto vinculada ao ponto, guardada no próprio documento (base64).
+        // Limite de ~400 mil caracteres (~300 KB); o documento do Firestore
+        // aceita até 1 MiB. Mantenha igual a maxFotoBase64 no app.
+        && d.fotoBase64 is string
+        && d.fotoBase64.size() > 0 && d.fotoBase64.size() <= 400000
+
+        // data gravada pelo servidor
+        && d.dataCadastro == request.time;
+    }
+  }
+}
