@@ -1,7 +1,5 @@
 # ApoiaPet 🐾
-**Encontre pontos. Compartilhe cuidado.**
 
-App Flutter com Firebase (Authentication + Cloud Firestore), tudo no plano gratuito (Spark), sem cartão de crédito e mapa OpenStreetMap.
 Projeto da disciplina *Desenvolvimento para plataformas móveis*.
 
 ## Conteúdo
@@ -47,18 +45,8 @@ flutter run -d emulator-5554
 ```
 O emulador precisa ter internet e uma imagem **com Google Play** (para o login com Google).
 
-## Protótipo (sem Firebase) — é o padrão
-O `lib/main.dart` roda o app completo sem Firebase: login simulado e pontos de exemplo em memória (o cadastro funciona, mas os dados somem ao fechar). Não precisa de conta, `flutterfire` nem `google-services.json`.
-```
-flutter create --org br.edu.unidavi --project-name apoiapet --platforms android .
-python tool\configurar_plataformas.py
-flutter pub get
-flutter run
-```
-Para gerar um APK e enviar ao professor (sai em `build/app/outputs/flutter-apk/app-release.apk`):
-```
-flutter build apk --release
-```
+## Protótipo (sem Firebase) — (atualmente utilizando este)
+
 **Testar no Chrome (Flutter Web):** adicione a plataforma web ao projeto e rode no navegador:
 ```
 flutter create --platforms web .
@@ -66,8 +54,6 @@ flutter pub get
 flutter run -d chrome
 ```
 No Chrome, "Tirar foto" abre o seletor de arquivos e a localização pede permissão ao navegador. Se negar, escolha o ponto manualmente no mapa.
-
-A versão com Firebase está em `lib/main_firebase.dart` (`flutter run -t lib/main_firebase.dart`) e exige o passo a passo acima.
 
 ## Telas
 1. **Login** — Entrar com Google (Firebase Auth); a sessão é mantida ao reabrir o app
@@ -90,11 +76,6 @@ A versão com Firebase está em `lib/main_firebase.dart` (`flutter run -t lib/ma
 - `services/firebase_auth_service.dart` e `firestore_ponto_repository.dart`: implementações Firebase (usadas em `main_firebase.dart`).
 - `services/ponto_repository_memoria.dart` e `MockAuthService`: versões em memória, usadas no protótipo (`main.dart`) e no teste automático.
 
-## Sobre a foto e o plano gratuito
-- A foto é reduzida no aparelho (máx. 800 px, qualidade 60), o que costuma dar de 50 a 150 KB, e gravada como texto base64 no campo `fotoBase64` do ponto.
-- Limite do app e das regras: ~300 KB por foto (o Firestore aceita 1 MiB por documento). Foto maior é recusada com aviso.
-- Cota gratuita do Firestore (Spark): 1 GiB guardados, 50 mil leituras/dia e 20 mil gravações/dia. Para um projeto acadêmico, sobra. Como a foto vem junto do ponto, o mapa baixa as fotos de todos os pontos ativos; com centenas de pontos, vale mover a foto para um documento separado.
-- Para deixar o projeto sem risco de cobrança, mantenha o plano Spark e não vincule conta de faturamento.
 
 ## Observações
 - Mapa: tiles públicos do OpenStreetMap, com atribuição. Adequado ao trabalho acadêmico; produção exige respeitar a política de tiles ou usar outro provedor.
