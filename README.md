@@ -77,7 +77,3 @@ No Chrome, "Tirar foto" abre o seletor de arquivos e a localização pede permis
 - `services/ponto_repository_memoria.dart` e `MockAuthService`: versões em memória, usadas no protótipo (`main.dart`) e no teste automático.
 
 
-## Observações
-- Mapa: tiles públicos do OpenStreetMap, com atribuição. Adequado ao trabalho acadêmico; produção exige respeitar a política de tiles ou usar outro provedor.
-- Cores: somente a paleta oficial; o vermelho de erro é o tom auxiliar permitido.
-- As regras de segurança e o código Firebase não puderam ser executados no ambiente em que foram escritos; teste conforme a seção acima.
