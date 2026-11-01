@@ -1,7 +1,4 @@
 rules_version = '2';
-
-// ApoiaPet — regras do Cloud Firestore
-// Cole em: Console do Firebase > Firestore Database > Regras > Publicar
 service cloud.firestore {
   match /databases/{database}/documents {
 
