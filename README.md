@@ -7,7 +7,7 @@ Projeto da disciplina *Desenvolvimento para plataformas móveis*.
 |---|---|
 | `lib/` | Código Flutter (6 telas, serviços Firebase) |
 | `firebase/firestore.rules` | Regras de segurança do Firestore |
-| `docs/MODELAGEM.md` + `docs/DER.png` | Modelagem dos dados e diagrama |
+| `docs/MODELAGEM.md` | Modelagem dos dados |
 | `tool/configurar_plataformas.py` | Ajusta permissões e nome do app no Android/iOS |
 
 ## Passo a passo para rodar
